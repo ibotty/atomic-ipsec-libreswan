@@ -1,5 +1,8 @@
 # IPSEC for (bare metal) atomic hosts
 
+[![Docker
+Status](https://dockeri.co/image/ibotty/ipsec-libreswan)](https://registry.hub.docker.com/u/ibotty/ipsec-libreswan/)
+
 Atomic hosts do not support traditional installation of additional software
 with e.g. rpm. That privileged docker container is meant to be run on system
 startup (via a systemd unit) and support IPSEC for the docker host.
