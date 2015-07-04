@@ -31,8 +31,8 @@ Description=LibreSwan IPSEC running in ${NAME}
 After=docker.service
 
 [Service]
-ExecStart=/usr/bin/docker start ${NAME}
-ExecStop=sh -c '/usr/bin/docker exec -t ${NAME} /bin/entrypoint.sh  stop ; /usr/bin/docker stop ${NAME}'
+ExecStart=/usr/bin/docker run --rm --privileged --net=host -v /lib/modules:/lib/modules:ro -v /etc/ipsec:/etc/ipsec -v /etc/ipsec.d:/etc/ipsec.d --name ${NAME} ${IMAGE}
+ExecStop=/bin/sh -c '/usr/bin/docker exec -t ${NAME} /bin/entrypoint.sh stop ; /usr/bin/docker stop ${NAME}'
 ExecReload=/usr/bin/docker exec -t ${NAME} /bin/entrypoint.sh reload
 
 [Install]
