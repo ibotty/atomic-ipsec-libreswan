@@ -41,6 +41,7 @@ cat <<EOF > ${HOST}/etc/systemd/system/ipsec.service
 [Unit]
 Description=LibreSwan IPSEC running in ${NAME}
 After=docker.service
+BindTo=docker.service
 
 [Service]
 ExecStart=/usr/bin/docker run --rm --privileged --net=host -v /lib/modules:/lib/modules:ro -v /etc/ipsec:/etc/ipsec -v /etc/ipsec.d:/etc/ipsec.d --name ${NAME} ${IMAGE}
