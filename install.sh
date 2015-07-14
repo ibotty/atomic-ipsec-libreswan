@@ -47,7 +47,10 @@ fi
 
 mkdir -p /var/lib/machines/${NAME}
 
-chroot $HOST /usr/bin/docker export $DOCKER_CONTAINER_ID | tar -xC ${HOST}/var/lib/machines/${NAME}
+chroot $HOST /usr/bin/docker export $DOCKER_CONTAINER_ID \
+  | tar -xC ${HOST}/var/lib/machines/${NAME}
+
+chroot $HOST /usr/bin/docker rm $DOCKER_CONTAINER_ID
 
 cat <<EOF > ${HOST}/etc/systemd/system/ipsec.service
 
