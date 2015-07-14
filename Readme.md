@@ -16,7 +16,15 @@ It uses Libreswan from the fedora 22 repository.
 Run the following command to set up the necessary symlinks and systemd unit.
 
 ```shell
-atomic run ibotty/ipsec-libreswan
+atomic install ibotty/ipsec-libreswan
+```
+
+You might want to start and enable it afterwards.
+
+```shell
+systemctl daemon-reload
+systemctl enable ipsec.service
+systemctl restart ipsec.service
 ```
 
 If you don't run atomic but are certain you want to run Libreswan inside of a
@@ -39,6 +47,13 @@ docker run --rm --privileged --net=host \
        -v /etc/ipsec.d:/etc/ipsec.d --name ipsec-libreswan \
        ibotty/libreswan
 ```
+
+or use systemd:
+
+```shell
+systemd-nspawn --quiet --capability CAP_NET_ADMIN --tmpfs /var/run/pluto \
+               --bind /proc/sys/net --bind-ro /lib/modules --bind /etc/ipsec \
+               --bind /etc/ipsec.d --machine=ipsec-libreswan /bin/entrypoint.sh start
 
 ## Configuration
 
