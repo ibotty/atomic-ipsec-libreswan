@@ -39,7 +39,7 @@ ln -fs /etc/ipsec/ipsec.conf ${HOST}/etc/ipsec.conf
 ln -fs /etc/ipsec/ipsec.secrets ${HOST}/etc/ipsec.secrets
 ln -fs /etc/ipsec/sysconfig.ipsec ${HOST}/etc/sysconfig/ipsec
 
-DOCKER_CONTAINER_ID=$(/usr/bin/docker create ${IMAGE})
+DOCKER_CONTAINER_ID=$(chroot $HOST /usr/bin/docker create ${IMAGE})
 
 if [ -d /var/lib/machines/${NAME} ]; then
     rm -r /var/lib/machines/${NAME}
@@ -47,7 +47,7 @@ fi
 
 mkdir -p /var/lib/machines/${NAME}
 
-/usr/bin/docker export $DOCKER_CONTAINER_ID | tar -xC /var/lib/machines/${NAME}
+chroot $HOST /usr/bin/docker export $DOCKER_CONTAINER_ID | tar -xC ${HOST}/var/lib/machines/${NAME}
 
 cat <<EOF > ${HOST}/etc/systemd/system/ipsec.service
 
