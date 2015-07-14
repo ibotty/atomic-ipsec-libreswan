@@ -59,8 +59,8 @@ WantedBy=multi-user.target
 
 [Unit]
 Description=LibreSwan IPSEC running in ${NAME}
-After=docker.service
-BindTo=docker.service
+After=network.service
+BindTo=network.service
 
 [Service]
 ExecStart=/usr/bin/systemd-nspawn --quiet --capability CAP_NET_ADMIN --tmpfs /var/run/pluto --bind /proc/sys/net --bind-ro /lib/modules --bind /etc/ipsec --bind /etc/ipsec.d --machine=${NAME} /bin/entrypoint.sh start
