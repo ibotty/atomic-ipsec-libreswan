@@ -1,5 +1,7 @@
 #!/bin/sh
 
+set -e
+
 if [ ! -d ${HOST}/etc/ipsec.d ] ; then
   mkdir ${HOST}/etc/ipsec.d
   chroot ${HOST} restorecon -R /etc/ipsec.d
@@ -37,16 +39,30 @@ ln -fs /etc/ipsec/ipsec.conf ${HOST}/etc/ipsec.conf
 ln -fs /etc/ipsec/ipsec.secrets ${HOST}/etc/ipsec.secrets
 ln -fs /etc/ipsec/sysconfig.ipsec ${HOST}/etc/sysconfig/ipsec
 
+DOCKER_CONTAINER_ID=$(/usr/bin/docker create ${IMAGE})
+
+if [ -d /var/lib/machines/${NAME} ]; then
+    rm -r /var/lib/machines/${NAME}
+fi
+
+mkdir -p /var/lib/machines/${NAME}
+
+/usr/bin/docker export $DOCKER_CONTAINER_ID | tar -xC /var/lib/machines/${NAME}
+
 cat <<EOF > ${HOST}/etc/systemd/system/ipsec.service
+
+[Install]
+WantedBy=multi-user.target
+
 [Unit]
 Description=LibreSwan IPSEC running in ${NAME}
 After=docker.service
 BindTo=docker.service
 
 [Service]
-ExecStart=/usr/bin/docker run --rm --privileged --net=host -v /lib/modules:/lib/modules:ro -v /etc/ipsec:/etc/ipsec -v /etc/ipsec.d:/etc/ipsec.d --name ${NAME} ${IMAGE}
-ExecStop=/bin/sh -c '/usr/bin/docker exec -t ${NAME} /bin/entrypoint.sh stop ; /usr/bin/docker stop ${NAME}'
-ExecReload=/usr/bin/docker exec -t ${NAME} /bin/entrypoint.sh reload
+ExecStart=/usr/bin/systemd-nspawn --quiet --capability CAP_NET_ADMIN --tmpfs /var/run/pluto --bind /proc/sys/net --bind-ro /lib/modules --bind /etc/ipsec --bind /etc/ipsec.d --machine=${NAME} /bin/entrypoint.sh start
+ExecStop=/bin/sh -c '/usr/bin/systemd-run --machine ${NAME} /bin/entrypoint stop; /usr/bin/machinectl poweroff ${NAME}'
+ExecReload=/usr/bin/systemd-run --machine ${NAME} /bin/entrypoint.sh reload
 
 [Install]
 WantedBy=multi-user.target
