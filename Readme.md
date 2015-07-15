@@ -12,7 +12,7 @@ It uses Libreswan from the fedora 22 repository.
 
 ## Installation
 
-### Using systemd
+### Automatically starting via Systemd Unit
 Run the following command to set up the necessary symlinks and systemd unit.
 
 ```shell
