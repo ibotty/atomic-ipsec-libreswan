@@ -53,17 +53,12 @@ chroot $HOST /usr/bin/docker export $DOCKER_CONTAINER_ID \
 chroot $HOST /usr/bin/docker rm $DOCKER_CONTAINER_ID
 
 cat <<EOF > ${HOST}/etc/systemd/system/ipsec.service
-
-[Install]
-WantedBy=multi-user.target
-
 [Unit]
 Description=LibreSwan IPSEC running in ${NAME}
-After=network.service
-BindTo=network.service
+After=network-online.target
 
 [Service]
-ExecStart=/usr/bin/systemd-nspawn --quiet --capability CAP_NET_ADMIN --tmpfs /var/run/pluto --bind /proc/sys/net --bind-ro /lib/modules --bind /etc/ipsec --bind /etc/ipsec.d --machine=${NAME} /bin/entrypoint.sh start
+ExecStart=/usr/bin/systemd-nspawn --quiet --capability all --tmpfs /var/run/pluto --bind /proc/sys/net --bind-ro /lib/modules --bind /etc/ipsec --bind /etc/ipsec.d --machine=${NAME} /bin/entrypoint.sh start
 ExecStop=/bin/sh -c '/usr/bin/systemd-run --machine ${NAME} /bin/entrypoint stop; /usr/bin/machinectl poweroff ${NAME}'
 ExecReload=/usr/bin/systemd-run --machine ${NAME} /bin/entrypoint.sh reload
 

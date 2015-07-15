@@ -51,7 +51,7 @@ docker run --rm --privileged --net=host \
 or use systemd:
 
 ```shell
-systemd-nspawn --quiet --capability CAP_NET_ADMIN --tmpfs /var/run/pluto \
+systemd-nspawn --quiet --capability all --tmpfs /var/run/pluto \
                --bind /proc/sys/net --bind-ro /lib/modules --bind /etc/ipsec \
                --bind /etc/ipsec.d --machine=ipsec-libreswan /bin/entrypoint.sh start
 
