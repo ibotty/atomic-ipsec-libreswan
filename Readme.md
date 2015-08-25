@@ -37,6 +37,15 @@ docker run --rm --privileged --entrypoint /bin/sh -v /:/host \
   ibotty/ipsec-libreswan /bin/install.sh
 ```
 
+### Ordering Systemd Units
+
+You might require some intra-cluster traffic to be encrypted. To only start
+e.g. etcd when ipsec is set up, instruct systemd to order it accordingly.
+
+```shell
+systemctl add-requires etcd.service ipsec.service
+```
+
 ### By hand
 
 Start ipsec IKE daemon (pluto) by running the following command.
