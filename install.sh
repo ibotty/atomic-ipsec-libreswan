@@ -39,18 +39,7 @@ ln -fs /etc/ipsec/ipsec.conf ${HOST}/etc/ipsec.conf
 ln -fs /etc/ipsec/ipsec.secrets ${HOST}/etc/ipsec.secrets
 ln -fs /etc/ipsec/sysconfig.ipsec ${HOST}/etc/sysconfig/ipsec
 
-DOCKER_CONTAINER_ID=$(chroot $HOST /usr/bin/docker create ${IMAGE})
-
-if [ -d /var/lib/machines/${NAME} ]; then
-    rm -r /var/lib/machines/${NAME}
-fi
-
-mkdir -p /var/lib/machines/${NAME}
-
-chroot $HOST /usr/bin/docker export $DOCKER_CONTAINER_ID \
-  | tar -xC ${HOST}/var/lib/machines/${NAME}
-
-chroot $HOST /usr/bin/docker rm $DOCKER_CONTAINER_ID
+mkdir -p ${HOST}/var/lib/machines/${NAME}
 
 cat <<EOF > ${HOST}/etc/systemd/system/ipsec.service
 [Unit]
@@ -58,10 +47,12 @@ Description=LibreSwan IPSEC running in ${NAME}
 After=network-online.target
 
 [Service]
-ExecStart=/usr/bin/systemd-nspawn --quiet --capability all --tmpfs /var/run/pluto --bind /proc/sys/net --bind-ro /lib/modules --bind /etc/ipsec --bind /etc/ipsec.d --machine=${NAME} /bin/entrypoint.sh start
-ExecStop=/bin/sh -c '/usr/bin/systemd-run --machine ${NAME} /bin/entrypoint stop; /usr/bin/machinectl poweroff ${NAME}'
-ExecReload=/usr/bin/systemd-run --machine ${NAME} /bin/entrypoint.sh reload
+ExecStartPre=/bin/atomic mount -o rw ${IMAGE} /var/lib/machines/${NAME}
+ExecStart=/bin/systemd-nspawn --quiet --capability all --tmpfs /var/run/pluto --bind /proc/sys/net --bind-ro /lib/modules --bind /etc/ipsec --bind /etc/ipsec.d --machine=${NAME} /bin/entrypoint.sh start
+ExecStop=/bin/sh -c '/bin/systemd-run --machine ${NAME} /bin/entrypoint stop; /bin/machinectl poweroff ${NAME}'
+ExecReload=/bin/systemd-run --machine ${NAME} /bin/entrypoint.sh reload
 
 [Install]
 WantedBy=multi-user.target
 EOF
+
