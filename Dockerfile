@@ -13,9 +13,10 @@ VOLUME ["/lib/modules", "/etc/ipsec", "/etc/ipsec.d"]
 
 RUN dnf --setopt=tsflags=nodocs -y install libreswan \
  && dnf clean all \
- && cp /etc/ipsec.conf /root/ipsec.conf \
- && cp /etc/ipsec.secrets /root/ipsec.secrets \
- && cp /etc/sysconfig/ipsec /root/sysconfig.ipsec \
+ && touch /etc/sysconfig/ipsec \
+ && mv /etc/ipsec.conf /root/ipsec.conf \
+ && mv /etc/ipsec.secrets /root/ipsec.secrets \
+ && mv /etc/sysconfig/ipsec /root/sysconfig.ipsec \
  && ln -fs /etc/ipsec/ipsec.conf /etc/ipsec.conf \
  && ln -fs /etc/ipsec/ipsec.secrets /etc/ipsec.secrets \
  && ln -fs /etc/ipsec/sysconfig.ipsec /etc/sysconfig/ipsec
