@@ -75,6 +75,6 @@ case "$cmd" in
       echo "$USAGE"
       ;;
     *)
-      exec /sbin/ipsec "$@"
+      exec /sbin/ipsec "$cmd" "$@"
       ;;
 esac
