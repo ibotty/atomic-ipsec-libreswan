@@ -12,27 +12,27 @@ if [ ! -d ${HOST}/etc/ipsec ] ; then
 fi
 
 if [ ! -f ${HOST}/etc/ipsec/ipsec.conf ]; then
-  cp /etc/ipsec/ipsec.conf $HOST/etc/ipsec/ipsec.conf
+  cp /root/ipsec.conf $HOST/etc/ipsec/ipsec.conf
 fi
 
 if [ ! -f ${HOST}/etc/ipsec/ipsec.secrets ]; then
-  cp /etc/ipsec/ipsec.secrets $HOST/etc/ipsec/ipsec.secrets
+  cp /root/ipsec.secrets $HOST/etc/ipsec/ipsec.secrets
 fi
 
 if [ ! -f ${HOST}/etc/ipsec/sysconfig.ipsec ]; then
-  cp /etc/ipsec/sysconfig.ipsec $HOST/etc/ipsec/sysconfig.ipsec
+  cp /root/sysconfig.ipsec $HOST/etc/ipsec/sysconfig.ipsec
 fi
 
 if [ -f ${HOST}/etc/ipsec.conf ]; then
-    mv ${HOST}/etc/ipsec.conf ${HOST}/etc/ipsec/ipsec.conf
+    mv -f ${HOST}/etc/ipsec.conf ${HOST}/etc/ipsec/ipsec.conf
 fi
 
 if [ -f ${HOST}/etc/ipsec.secrets ]; then
-    mv ${HOST}/etc/ipsec.secrets ${HOST}/etc/ipsec/ipsec.secrets
+    mv -f ${HOST}/etc/ipsec.secrets ${HOST}/etc/ipsec/ipsec.secrets
 fi
 
 if [ -f ${HOST}/etc/sysconfig/ipsec ]; then
-    mv ${HOST}/etc/sysconfig/ipsec ${HOST}/etc/ipsec/sysconfig.ipsec
+    mv -f ${HOST}/etc/sysconfig/ipsec ${HOST}/etc/ipsec/sysconfig.ipsec
 fi
 
 ln -fs /etc/ipsec/ipsec.conf ${HOST}/etc/ipsec.conf
