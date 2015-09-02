@@ -47,9 +47,9 @@ Description=LibreSwan IPSEC running in ${NAME}
 After=network-online.target
 
 [Service]
-ExecStartPre=/bin/atomic mount -o rw ${IMAGE} /var/lib/machines/${NAME}
+ExecStartPre=/bin/atomic mount -o rw docker.io/${IMAGE} /var/lib/machines/${NAME}
 ExecStart=/bin/systemd-nspawn --quiet --capability all --tmpfs /var/run/pluto --bind /proc/sys/net --bind-ro /lib/modules --bind /etc/ipsec --bind /etc/ipsec.d --machine=${NAME} /bin/entrypoint.sh start
-ExecStop=/bin/sh -c '/bin/systemd-run --machine ${NAME} /bin/entrypoint stop; /bin/machinectl poweroff ${NAME}'
+ExecStop=/bin/sh -c '/bin/systemd-run --machine ${NAME} /bin/entrypoint stop; /bin/machinectl poweroff ${NAME}; /bin/atomic unmount /var/lib/machines/${NAME}'
 ExecReload=/bin/systemd-run --machine ${NAME} /bin/entrypoint.sh reload
 
 [Install]
