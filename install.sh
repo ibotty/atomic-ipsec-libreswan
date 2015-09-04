@@ -48,7 +48,7 @@ fi
 mkdir -p /var/lib/machines/${NAME}
 
 chroot $HOST /usr/bin/docker export $DOCKER_CONTAINER_ID \
-  | chroot tar -xC /var/lib/machines/${NAME}
+  | chroot $HOST /usr/bin/tar -xC /var/lib/machines/${NAME}
 
 chroot $HOST /usr/bin/docker rm $DOCKER_CONTAINER_ID
 
