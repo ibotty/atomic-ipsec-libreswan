@@ -9,8 +9,6 @@ LABEL UNINSTALL="docker run --rm --privileged --entrypoint /bin/sh -v /:/host -e
 
 LABEL RUN="docker run -d --privileged --net=host -v /lib/modules:/lib/modules:ro -v /etc/ipsec:/etc/ipsec -v /etc/ipsec.d:/etc/ipsec.d -n NAME start"
 
-VOLUME ["/lib/modules", "/etc/ipsec", "/etc/ipsec.d"]
-
 RUN dnf --setopt=tsflags=nodocs -y install libreswan \
  && dnf clean all \
  && touch /etc/sysconfig/ipsec \
@@ -21,6 +19,7 @@ RUN dnf --setopt=tsflags=nodocs -y install libreswan \
  && ln -fs /etc/ipsec/ipsec.secrets /etc/ipsec.secrets \
  && ln -fs /etc/ipsec/sysconfig.ipsec /etc/sysconfig/ipsec
 
+VOLUME ["/lib/modules", "/etc/ipsec", "/etc/ipsec.d"]
 ENTRYPOINT ["/bin/entrypoint.sh"]
 CMD ["start"]
 
