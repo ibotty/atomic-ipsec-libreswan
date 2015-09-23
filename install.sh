@@ -41,11 +41,11 @@ ln -fs /etc/ipsec/sysconfig.ipsec ${HOST}/etc/sysconfig/ipsec
 
 DOCKER_CONTAINER_ID=$(chroot $HOST /usr/bin/docker create ${IMAGE})
 
-if [ -d /var/lib/machines/${NAME} ]; then
-    rm -r /var/lib/machines/${NAME}
+if [ -d ${HOST}/var/lib/machines/${NAME} ]; then
+    rm -r ${HOST}/var/lib/machines/${NAME}
 fi
 
-mkdir -p /var/lib/machines/${NAME}
+mkdir -p ${HOST}/var/lib/machines/${NAME}
 
 chroot $HOST /usr/bin/docker export $DOCKER_CONTAINER_ID \
   | chroot $HOST /usr/bin/tar -xC /var/lib/machines/${NAME}
