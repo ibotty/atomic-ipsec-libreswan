@@ -59,9 +59,8 @@ After=network-online.target
 Wants=network-online.target
 
 [Service]
-ExecStart=/bin/systemd-nspawn --quiet --capability all --tmpfs /var/run/pluto --bind /proc/sys/net --bind-ro /lib/modules --bind /etc/ipsec --bind /etc/ipsec.d --machine=${NAME} /bin/entrypoint.sh start
-ExecStop=/bin/sh -c '/bin/systemd-run --machine ${NAME} /bin/entrypoint stop; /bin/machinectl poweroff ${NAME}'
-ExecReload=/bin/systemd-run --machine ${NAME} /bin/entrypoint.sh reload
+ExecStart=/bin/systemd-nspawn --quiet --capability all --tmpfs /var/run/pluto --bind /proc/sys/net --bind-ro /lib/modules --bind /etc/ipsec --bind /etc/ipsec.d --machine=${NAME} -jb
+ExecStop=/bin/sh -c '/bin/systemd-run --machine ${NAME} /bin/systemctl stop ipsec; /bin/machinectl poweroff ${NAME}'
 
 [Install]
 WantedBy=multi-user.target
