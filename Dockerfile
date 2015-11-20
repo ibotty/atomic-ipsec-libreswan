@@ -1,4 +1,4 @@
-FROM fedora:22
+FROM fedora:23
 MAINTAINER Tobias Florek tob@butter.sh
 
 # for documentation only, it is meant to use host network
