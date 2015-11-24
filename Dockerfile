@@ -3,6 +3,7 @@ MAINTAINER Tobias Florek tob@butter.sh
 
 # for documentation only, it is meant to use host network
 EXPOSE 500 4500 50 51
+ENV container docker
 
 LABEL INSTALL="docker run --rm --privileged --entrypoint /bin/sh -v /:/host -e HOST=/host -e LOGDIR=\${LOGDIR} -e CONFDIR=\${CONFDIR} -e DATADIR=\${DATADIR} -e IMAGE=IMAGE -e NAME=NAME IMAGE /bin/install.sh"
 
