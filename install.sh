@@ -1,5 +1,4 @@
 #!/bin/sh
-
 set -e
 
 if [ ! -d ${HOST}/etc/ipsec.d ] ; then
@@ -41,6 +40,8 @@ ln -fs /etc/ipsec/sysconfig.ipsec ${HOST}/etc/sysconfig/ipsec
 
 DOCKER_CONTAINER_ID=$(chroot $HOST /usr/bin/docker create ${IMAGE})
 
+chroot $HOST /usr/bin/systemctl stop ipsec
+
 if [ -d ${HOST}/var/lib/machines/${NAME} ]; then
     rm -r ${HOST}/var/lib/machines/${NAME}
 fi
@@ -61,7 +62,8 @@ Wants=network-online.target
 [Service]
 ExecStart=/bin/systemd-nspawn --quiet --capability all --tmpfs /var/run/pluto --bind /proc/sys/net --bind-ro /lib/modules --bind /etc/ipsec --bind /etc/ipsec.d --machine=${NAME} -jb
 ExecStop=/bin/sh -c '/bin/systemd-run --machine ${NAME} /bin/systemctl stop ipsec; /bin/machinectl poweroff ${NAME}'
+ExecReload=/bin/systemd-run --machine ${NAME} /bin/systemctl reload ipsec
 
-[Install]
+[Install
 WantedBy=multi-user.target
 EOF
