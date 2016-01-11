@@ -42,7 +42,7 @@ ln -fs /etc/ipsec/sysconfig.ipsec ${HOST}/etc/sysconfig/ipsec
 
 DOCKER_CONTAINER_ID=$(chroot $HOST /usr/bin/docker create ${IMAGE})
 
-chroot $HOST /usr/bin/systemctl stop ipsec
+chroot $HOST /usr/bin/systemctl stop ipsec || true
 
 if [ -d ${HOST}/var/lib/machines/${NAME} ]; then
     rm -r ${HOST}/var/lib/machines/${NAME}
