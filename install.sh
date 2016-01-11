@@ -55,7 +55,7 @@ chroot $HOST /usr/bin/docker export $DOCKER_CONTAINER_ID \
 
 chroot $HOST /usr/bin/docker rm $DOCKER_CONTAINER_ID
 
-if [ $SYSTEMD_VERSION -be 219 ]; then
+if [ $SYSTEMD_VERSION -ge 219 ]; then
     cat <<EOF > ${HOST}/etc/systemd/system/ipsec.service
 [Unit]
 Description=LibreSwan IPSEC running in ${NAME}
