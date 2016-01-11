@@ -1,4 +1,4 @@
-FROM fedora:23
+FROM centos:7
 MAINTAINER Tobias Florek tob@butter.sh
 
 # for documentation only, it is meant to use host network
@@ -11,8 +11,8 @@ LABEL UNINSTALL="docker run --rm --privileged --entrypoint /bin/sh -v /:/host -e
 
 LABEL RUN="docker run -d --privileged --net=host -v /lib/modules:/lib/modules:ro -v /etc/ipsec:/etc/ipsec -v /etc/ipsec.d:/etc/ipsec.d -n NAME /sbin/init"
 
-RUN dnf --setopt=tsflags=nodocs -y install libreswan \
- && dnf clean all \
+RUN yum --setopt=tsflags=nodocs -y install libreswan \
+ && yum clean all \
  && touch /etc/sysconfig/ipsec \
  && mv /etc/ipsec.conf /root/ipsec.conf \
  && mv /etc/ipsec.secrets /root/ipsec.secrets \
@@ -21,7 +21,6 @@ RUN dnf --setopt=tsflags=nodocs -y install libreswan \
  && ln -fs /etc/ipsec/ipsec.secrets /etc/ipsec.secrets \
  && ln -fs /etc/ipsec/sysconfig.ipsec /etc/sysconfig/ipsec \
  && rm /etc/systemd/system/*.wants/* \
- && systemctl mask dnf-makecache.timer \
  && systemctl enable ipsec
 
 VOLUME ["/lib/modules", "/etc/ipsec", "/etc/ipsec.d", "/sys/fs/cgroup"]
