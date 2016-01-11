@@ -9,7 +9,7 @@ LABEL INSTALL="docker run --rm --privileged --entrypoint /bin/sh -v /:/host -e H
 
 LABEL UNINSTALL="docker run --rm --privileged --entrypoint /bin/sh -v /:/host -e HOST=/host -e IMAGE=IMAGE -e NAME=NAME IMAGE /bin/uninstall.sh"
 
-LABEL RUN="docker run -d --privileged --net=host -v /lib/modules:/lib/modules:ro -v /etc/ipsec:/etc/ipsec -v /etc/ipsec.d:/etc/ipsec.d -n NAME start"
+LABEL RUN="docker run -d --privileged --net=host -v /lib/modules:/lib/modules:ro -v /etc/ipsec:/etc/ipsec -v /etc/ipsec.d:/etc/ipsec.d -n NAME /sbin/init"
 
 RUN dnf --setopt=tsflags=nodocs -y install libreswan \
  && dnf clean all \
