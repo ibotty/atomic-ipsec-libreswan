@@ -1,6 +1,8 @@
 #!/bin/sh
 set -e
 
+SYSTEMD_VERSION=$(chroot $HOST rpm -q systemd --queryformat '%{VERSION}')
+
 if [ ! -d ${HOST}/etc/ipsec.d ] ; then
   mkdir ${HOST}/etc/ipsec.d
   chroot ${HOST} restorecon -R /etc/ipsec.d
@@ -53,17 +55,35 @@ chroot $HOST /usr/bin/docker export $DOCKER_CONTAINER_ID \
 
 chroot $HOST /usr/bin/docker rm $DOCKER_CONTAINER_ID
 
-cat <<EOF > ${HOST}/etc/systemd/system/ipsec.service
+if [ $SYSTEMD_VERSION -be 219 ]; then
+    cat <<EOF > ${HOST}/etc/systemd/system/ipsec.service
 [Unit]
 Description=LibreSwan IPSEC running in ${NAME}
 After=network-online.target
 Wants=network-online.target
 
 [Service]
-ExecStart=/bin/systemd-nspawn --quiet --capability all --tmpfs /var/run/pluto --bind /proc/sys/net --bind-ro /lib/modules --bind /etc/ipsec --bind /etc/ipsec.d --machine=${NAME} -jb
-ExecStop=/bin/sh -c '/bin/systemd-run --machine ${NAME} /bin/systemctl stop ipsec; /bin/machinectl poweroff ${NAME}'
-ExecReload=/bin/systemd-run --machine ${NAME} /bin/systemctl reload ipsec
+ExecStart=/bin/systemd-nspawn --quiet --capability CAP_NET_ADMIN,CAP_SYS_MODULE --tmpfs /var/run/pluto --bind /proc/sys/net --bind-ro /lib/modules --bind /etc/ipsec --bind /etc/ipsec.d --machine=${NAME} -jb
+ExecStop=/bin/machinectl poweroff ${NAME}
+ExecReload=/bin/systemctl --machine ${NAME} reload ipsec
 
 [Install
 WantedBy=multi-user.target
 EOF
+
+else
+    cat <<EOF > ${HOST}/etc/systemd/system/ipsec.service
+[Unit]
+Description=LibreSwan IPSEC running in ipsec-libreswan
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+ExecStartPre=systemd-machine-id-setup --root /var/lib/machines/ipsec-libreswan
+ExecStart=/bin/systemd-nspawn --capability CAP_NET_ADMIN,CAP_SYS_MODULE --bind /proc/sys/net --bind-ro /lib/modules --bind /etc/ipsec --bind /etc/ipsec.d --machine=ipsec-libreswan -jb -D /var/lib/machines/ipsec-libreswan
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+fi
