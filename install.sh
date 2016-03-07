@@ -63,11 +63,12 @@ After=network-online.target
 Wants=network-online.target
 
 [Service]
+ExecStartPre=/bin/systemd-machine-id-setup --root /var/lib/machines/ipsec-libreswan
 ExecStart=/bin/systemd-nspawn --quiet --capability CAP_NET_ADMIN,CAP_SYS_MODULE --tmpfs /var/run/pluto --bind /proc/sys/net --bind-ro /lib/modules --bind /etc/ipsec --bind /etc/ipsec.d --machine=${NAME} -jb
 ExecStop=/bin/machinectl poweroff ${NAME}
 ExecReload=/bin/systemctl --machine ${NAME} reload ipsec
 
-[Install
+[Install]
 WantedBy=multi-user.target
 EOF
 
@@ -80,7 +81,7 @@ Wants=network-online.target
 
 [Service]
 ExecStartPre=/bin/systemd-machine-id-setup --root /var/lib/machines/ipsec-libreswan
-ExecStart=/bin/systemd-nspawn --capability CAP_NET_ADMIN,CAP_SYS_MODULE --bind /proc/sys/net --bind-ro /lib/modules --bind /etc/ipsec --bind /etc/ipsec.d --machine=ipsec-libreswan -jb -D /var/lib/machines/ipsec-libreswan
+ExecStart=/bin/systemd-nspawn --capability CAP_NET_ADMIN,CAP_SYS_MODULE --bind /proc/sys/net --bind-ro /lib/modules --bind /etc/ipsec --bind /etc/ipsec.d --machine=${NAME} -jb -D /var/lib/machines/${NAME}
 
 [Install]
 WantedBy=multi-user.target
